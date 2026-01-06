@@ -28,7 +28,7 @@ export default function Navbar() {
             <Link href="#faq" className="text-foreground hover:text-primary transition">
               FAQ
             </Link>
-            <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer">
+            <a href="https://wa.me/918307749595" target="_blank" rel="noopener noreferrer">
               <Button className="bg-[#25D366] hover:bg-[#20BA5C] text-white">Contact on WhatsApp</Button>
             </a>
           </div>

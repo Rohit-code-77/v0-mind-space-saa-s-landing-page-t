@@ -17,25 +17,17 @@ export default function ContactForm() {
 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
   const [statusMessage, setStatusMessage] = useState("")
-  const [focusedField, setFocusedField] = useState<string | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
+    setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setStatus("loading")
 
-    if (!formRef.current) {
-      setStatus("error")
-      setStatusMessage("Form not ready. Please refresh and try again.")
-      return
-    }
+    if (!formRef.current) return
 
     try {
       await emailjs.sendForm(
@@ -46,31 +38,70 @@ export default function ContactForm() {
       )
 
       setStatus("success")
-        setStatusMessage("Thank you! Your message has been sent successfully. We'll be in touch soon.")
+      setStatusMessage("Thank you! Your message has been sent successfully.")
       setFormData({ name: "", email: "", phone: "", message: "" })
       formRef.current.reset()
 
       setTimeout(() => setStatus("idle"), 5000)
-    } catch (error: any) {
-      console.error("EmailJS Error:", error?.text || error)
+    } catch (err) {
+      console.error(err)
       setStatus("error")
-      setStatusMessage(error?.text || "Failed to send message. Please try again.")
+      setStatusMessage("Failed to send message. Please try again.")
     }
   }
 
   return (
-    <section id="contact-form" className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section className="relative py-20 px-4">
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-emerald-50 to-blue-50" />
-      <div className="absolute -top-40 -right-40 w-80 h-80 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
-      <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
 
       <div className="relative max-w-5xl mx-auto">
-        <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/60 p-8 sm:p-12">
-          <form
-            ref={formRef}
-            onSubmit={handleSubmit}
-            className="space-y-6"
-          >
+        {/* HEADER */}
+        <div className="text-center mb-16">
+          <h2 className="text-5xl font-bold mb-4">Let’s Connect</h2>
+          <p className="text-gray-600">
+            Have questions? Fill the form and we’ll get back within 24 hours.
+          </p>
+        </div>
+
+        {/* CONTACT OPTIONS */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12" id="contact-form">
+          <div className="p-6 rounded-2xl bg-white shadow">
+            <Phone className="text-emerald-600 mb-3" />
+            <h3 className="font-bold">Call Us</h3>
+            <a
+              href="tel:+918307749595"
+              className="text-emerald-600 text-sm"
+            >
+              +91-8307749595
+            </a>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-white shadow">
+            <Mail className="text-blue-600 mb-3" />
+            <h3 className="font-bold">Email Us</h3>
+            <a
+              href="mailto:epfcentre123@gmail.com"
+              className="text-blue-600 text-sm"
+            >
+              epfcentre123@gmail.com
+            </a>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-white shadow">
+            <MessageSquare className="text-amber-600 mb-3" />
+            <h3 className="font-bold">WhatsApp</h3>
+            <a
+              href="https://wa.me/918307749595"
+              className="text-amber-600 text-sm"
+            >
+              Start Chat
+            </a>
+          </div>
+        </div>
+
+        {/* FORM */}
+        <div className="bg-white rounded-3xl shadow-xl p-8 sm:p-12">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
             {/* Name */}
             <div>
               <label className="block text-sm font-semibold mb-2">
@@ -85,7 +116,7 @@ export default function ContactForm() {
                   onChange={handleChange}
                   required
                   className="w-full pl-12 pr-4 py-3 rounded-xl border-2"
-                  placeholder="Enter your full name"
+                  placeholder="Your full name"
                 />
               </div>
             </div>
@@ -142,21 +173,21 @@ export default function ContactForm() {
                   onChange={handleChange}
                   required
                   className="w-full pl-12 pr-4 py-3 rounded-xl border-2 resize-none"
-                  placeholder="Tell us how we can help you..."
+                  placeholder="How can we help you?"
                 />
               </div>
             </div>
 
+            {/* STATUS */}
             {status === "success" && (
-              <div className="flex items-center gap-2 text-green-600">
+              <p className="flex items-center gap-2 text-green-600">
                 <CheckCircle /> {statusMessage}
-              </div>
+              </p>
             )}
-
             {status === "error" && (
-              <div className="flex items-center gap-2 text-red-600">
+              <p className="flex items-center gap-2 text-red-600">
                 <AlertCircle /> {statusMessage}
-              </div>
+              </p>
             )}
 
             <button
@@ -166,8 +197,6 @@ export default function ContactForm() {
             >
               {status === "loading" ? "Sending..." : "Send Message"}
             </button>
-
-            <p className="text-center text-sm text-gray-600">We'll respond to your inquiry within 24 business hours.</p>
           </form>
         </div>
       </div>
